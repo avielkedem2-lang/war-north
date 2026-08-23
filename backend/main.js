@@ -18,8 +18,6 @@ app.use("/games", router)
 
 
 
-console.log(PORT);
-
 
 async function run() {
     try {
