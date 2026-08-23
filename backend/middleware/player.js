@@ -9,7 +9,7 @@ export const checkName = (req, res, next) => {
 
 
 export const checkId = (req, res, next) => {
-    const id = req.prams.id
-    if (!id || ObjectId.isValid(id)) return res.status(400).send("Bad request")
+    const id = req.params.id
+    if (!id || !ObjectId.isValid(id)) return res.status(400).send("Bad request")
     next()
 }

@@ -1,5 +1,6 @@
 import mapDal from "../DAL/mapDal.js";
 import playersDal from "../DAL/playersDal.js";
+import { createError } from "../error/error.js";
 import { readFromFile } from "../file/read.js"
 
 
@@ -7,8 +8,6 @@ import { readFromFile } from "../file/read.js"
 
 export async function createPlayer(playerName) {
     const dataMap = await addToMap()
-    // console.log(dataMap);
-
     const territories = []
     dataMap.forEach((t) => {
         if (t.owner === "player") {
@@ -20,6 +19,22 @@ export async function createPlayer(playerName) {
     await mapDal.insertData(dataMap)
     return { ...allPlayer }
 }
+
+
+
+
+
+
+
+export async function getGameById(id){
+    const game = await playersDal.findPlaterById(id)
+    if (!game) throw createError(404, {error: "The game not found"})
+    return game
+}
+
+
+
+
 
 
 
