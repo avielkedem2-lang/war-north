@@ -1,5 +1,6 @@
 import express from "express"
 import cors from "cors"
+import { connection } from "./db/mongodb.js"
 
 const app = express()
 
@@ -11,6 +12,14 @@ app.use(cors())
 
 
 
-app.listen(PORT, ()=> {
-    console.log("The server running ...");
-})
+async function run() {
+    try {
+        await connection()
+        app.listen(PORT, () => {
+            console.log("The server running ...");
+        })
+    } catch (error) {
+        console.log(error);
+    }
+} 
+run()
