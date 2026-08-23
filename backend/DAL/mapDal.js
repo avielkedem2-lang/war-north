@@ -10,7 +10,19 @@ async function insertData(data) {
 
 
 
+async function findTerritory(id) {
+    return await collection.findOne({id})
+}
+
+
+async function updateTerritory(id, territory) {
+    return await collection.updateOne({id}, {$set : {...territory}})
+}
+
+
 
 export default {
     insertData,
+    findTerritory,
+    updateTerritory,
 }
