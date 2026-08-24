@@ -130,4 +130,68 @@ describe("function updateGame", () => {
         const data = await updateGame(id, 7)
         assert.deepStrictEqual(data, d)
     })
+
+    test("invalid return error status-404", async () => {
+        const id = "6a86fdb3fe9a1d4d413318c1"
+        const territory = {
+            "_id": "6a8af75ed08a0de2d7a8d5a8",
+            "id": 7,
+            "name": "צור",
+            "x": 45.9,
+            "y": 21,
+            "neighbors": [
+                4,
+                6,
+                8,
+                10
+            ],
+            "startOwner": "computer",
+            "distanceFromComputerHQ": 2,
+            "distanceFromPlayerHQ": 4,
+            "owner": "player",
+            "soldiers": 4
+        }
+        const player = {
+            _id: "6a86fdb3fe9a1d4d413318c1",
+            "playerName": "avi",
+            "round": 1,
+            "phase": "move",
+            "status": "playing",
+            "winner": null,
+            "territories": [territory]
+        }
+
+        mock.method(
+            playerDal,
+            "findPlaterById",
+            (id) => { return null }
+        )
+
+        mock.method(
+            playerDal,
+            "updateGame",
+            (id, player) => { return null }
+        )
+
+        mock.method(
+            mapDal,
+            "findTerritory",
+            (territoryId) => { return territory }
+        )
+
+        mock.method(
+            mapDal,
+            "updateTerritory",
+            (territoryId, territory) => { return null }
+        )
+
+        mock.method(
+            mapDal,
+            "findTerritories",
+            (name) => { return [] }
+        )
+        assert.rejects(async ()=> {
+            await updateGame(id, 7)
+        })
+    })
 })
