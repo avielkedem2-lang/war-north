@@ -26,12 +26,41 @@ export async function createPlayer(playerName) {
 
 
 
-export async function getGameById(id){
+export async function getGameById(id) {
     const game = await playersDal.findPlaterById(id)
-    if (!game) throw createError(404, {error: "The game not found"})
+    if (!game) throw createError(404, { error: "The game not found" })
     return game
 }
 
+
+
+
+
+
+
+
+
+export async function updateGame(id, territoryId) {
+    const game = await playersDal.findPlaterById(id)
+    if (!game) throw createError(404, { error: "The game not found" })
+    if (!game.phase === "reinforce") throw createError(400, "bad request")
+    let flag = false
+    game.territories.forEach((t) => {
+        if (t.id === territoryId){
+            flag = true
+        }
+    })
+
+    if (!flag) throw createError(400, "The territories must to be belongs to player")
+    
+    const territory =  await mapDal.findTerritory(territoryId)
+    territory.soldiers += 3
+    game.phase = "attack"
+    await mapDal.updateTerritory(territoryId, territory)
+    await playersDal.updateGame(id, game)
+    return {playerEvent: game.phase, computerEvents: []}
+
+}
 
 
 
@@ -59,7 +88,7 @@ async function addToMap() {
             }
         })
         // console.log(data);
-        
+
         return res
     } catch (error) {
         console.log(error);
