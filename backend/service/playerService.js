@@ -145,6 +145,15 @@ export async function move(id, body) {
 
 
 
+export async function moveSoldiers(id, body) {
+    
+}
+
+
+
+
+
+
 
 
 
