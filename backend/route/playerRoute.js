@@ -1,6 +1,6 @@
 import express from "express"
-import { checkId, checkName } from "../middleware/player.js"
-import { createPlayer , getGameById} from "../service/playerService.js"
+import { checkId, checkName, checkTerritoryId } from "../middleware/player.js"
+import { createPlayer, getGameById, updateGame } from "../service/playerService.js"
 
 
 const router = express.Router()
@@ -27,12 +27,35 @@ router.get("/:id", checkId, async (req, res) => {
         const game = await getGameById(id)
         res.status(200).json(game)
     } catch (error) {
-        if (error.status){
+        if (error.status) {
             res.status(error.status).json(error.message)
         }
         console.log(error);
     }
 })
+
+
+
+
+
+
+
+router.post("/:id/reinforce", checkId, checkTerritoryId, async (req, res) => {
+    try {
+        const id = req.params.id
+        const { territoryId } = req.body
+        const game = await updateGame(id, territoryId)
+        res.status(200).json(game)
+    } catch (error) {
+        if (error.status) {
+            res.status(error.status).json(error.message)
+        }
+        console.log(error);
+    }
+})
+
+
+
 
 
 
