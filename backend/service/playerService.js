@@ -68,6 +68,23 @@ export async function updateGame(id, territoryId) {
 
 
 
+
+export async function attack(id, body) {
+    
+}
+
+
+
+export async function move(id, body) {
+    
+}
+
+
+
+
+
+
+
 async function addToMap() {
     try {
         const res = await readFromFile()
