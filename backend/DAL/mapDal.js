@@ -20,9 +20,14 @@ async function updateTerritory(id, territory) {
 }
 
 
+async function findTerritories(owner) {
+    return await collection.find({owner}).toArray()
+}
+
 
 export default {
     insertData,
     findTerritory,
     updateTerritory,
+    findTerritories,
 }

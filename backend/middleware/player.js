@@ -28,6 +28,7 @@ export const checkTerritoryId = (req, res, next) => {
 
 export const checkBody = (req, res, next) => {
     const body = req.body
+    if (!body) return res.status(400).send("Bad request")
     if (body.fromId && body.toId && body.soldiers) return next();
     if (body.skip) return next();
     return res.status(400).send("Bad request")
