@@ -29,6 +29,7 @@ export async function createPlayer(playerName) {
 export async function getGameById(id) {
     const game = await playersDal.findPlaterById(id)
     if (!game) throw createError(404, { error: "The game not found" })
+    game.territories = await mapDal.findTerritories("player")
     return game
 }
 
@@ -85,8 +86,6 @@ export async function attack(id, body) {
     if (!checkOwner.neighbors.includes(body.toId)) throw createError(404, "You can only attack a neighbor");
 
     const territory = await mapDal.findTerritory(body.fromId)
-    console.log(body.soldiers);
-    
     const soldiers = territory.soldiers - body.soldiers
     if (soldiers < 1) throw createError(400, "One soldier must to stay in the base");
     console.log(soldiers);
@@ -146,8 +145,41 @@ export async function move(id, body) {
 
 
 export async function moveSoldiers(id, body) {
-    
+    if (!checkAttack(body)) throw createError(400, "Bad request")
+    const game = await playersDal.findPlaterById(id)
+    if (!game) throw createError(404, { error: "The game not found" });
+    if (body.fromId === body.toId) throw createError(409, "The 'fromId' and 'toId' can't be the same thing");
+
+    let checkOwner = isOwner(body.toId, game.territories);
+    if (!checkOwner) throw createError(400, "The territories must to be belongs to player");
+    const toIdNeighbors = checkOwner.neighbors
+    checkOwner = isOwner(body.fromId, game.territories);
+    if (!checkOwner) throw createError(400, "The territories must to be belongs to player");
+    if (!toIdNeighbors.includes(checkOwner.id)) createError(400, "they are not neighbors");
+
+
+    const territory = await mapDal.findTerritory(body.fromId)
+    if (territory.soldiers - body.soldiers < 1) throw createError(400, "One soldier must to stay in the base");
+
+    if (!game.phase === "move") throw createError(400, "The game must to be on 'move'");
+    territory.soldiers -= body.soldiers
+    const toTerritory = await mapDal.findTerritory(body.toId)
+    toTerritory.soldiers += body.soldiers
+
+    await mapDal.updateTerritory(body.fromId, territory)
+    await mapDal.updateTerritory(body.toId, toTerritory)
+
+
+    return {playerEvent: null, computerEvents: []}
 }
+
+
+
+
+
+
+
+
 
 
 
